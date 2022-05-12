@@ -11,8 +11,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class DrivermanagerApplication {
 
 	public static void main(String[] args) {
-//		SpringApplication.run(DrivermanagerApplication.class, args);
-		new SpringApplicationBuilder(DrivermanagerApplication.class).web(WebApplicationType.NONE).run(args);
+		SpringApplication.run(DrivermanagerApplication.class, args);
+//		new SpringApplicationBuilder(DrivermanagerApplication.class).web(WebApplicationType.NONE).run(args);
 	}
 
 }
