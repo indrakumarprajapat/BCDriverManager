@@ -3,10 +3,12 @@ import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
 @Entity
 @Data
+@Table(name = "cab_driverusers")
 public class Driver {
     @Id
     public int driver_id;

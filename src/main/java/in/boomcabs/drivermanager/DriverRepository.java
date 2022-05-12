@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Repository
-@Table(name = "cab_driverusers")
 public interface DriverRepository extends JpaRepository<Driver, Integer>{
     @Query(value = "SELECT * FROM cab_driverusers cd WHERE cd.status = 1", nativeQuery = true)
     List<Driver> findByOnline();
