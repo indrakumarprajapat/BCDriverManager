@@ -48,7 +48,7 @@ public class PushCallback implements MqttCallback {
             int dId = Integer.parseInt(values[0]);
             double lat = values[1].length() == 0 ? 0.0 : Double.parseDouble(values[1]);
             double lng = values[2].length() == 0 ? 0.0 : Double.parseDouble(values[2]);
-            driverService.updateBgServiceMqAliveLoction(dId, lat, lng);
+            driverService.updateBgServiceMqAliveLoction(dId, lat, lng, 0);
         }
     }
 

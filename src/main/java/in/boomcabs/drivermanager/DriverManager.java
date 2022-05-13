@@ -27,7 +27,7 @@ public class DriverManager {
     }
 
     //    @Scheduled(fixedRate = 240000)
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 60000)
     public void checkDriversAndUpdateThem() {
         LOG.info("Average value is {}");
         List<Driver> driverList = driverService.findAllOnlineDrivers();
@@ -35,15 +35,23 @@ public class DriverManager {
 
         for (int i = 0; i < driverList.size(); i++) {
             Driver driver = driverList.get(i);
-            long difference_In_Time
-                    = new Date().getTime() - driver.last_loc_update_time.getTime();
-            long difference_In_Minutes
-                    = (difference_In_Time
-                    / (1000 * 60))
-                    % 60;
-            if (difference_In_Minutes > 4) {
-                String payload = driver.driver_id + "|";
-                mqttPushClient.publish(1, false, TOPIC_DRIVER_LOC_REQ + driver.driver_id, payload);
+            try {
+                //Sending check loc msg
+                Date nowTime = new Date();
+                long diffInSeconds = (nowTime.getTime() - driver.last_loc_update_time.getTime())/ 1000;
+                if (diffInSeconds >= 60) {
+                    String payload = driver.driver_id + "|";
+                    mqttPushClient.publish(1, false, TOPIC_DRIVER_LOC_REQ + driver.driver_id, payload);
+                }
+                //updating values
+                try {
+                    driverService.updateBgServiceMqAliveLoc_Others(driver.driver_id,driver.check_alive_counter);
+                }catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

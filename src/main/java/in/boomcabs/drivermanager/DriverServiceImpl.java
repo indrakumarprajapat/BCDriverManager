@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 //  @Service marks a Java class that performs some service,
@@ -23,24 +24,32 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public void updateBgServiceMqAliveLoction(int driverId,double lat, double lng) {
-        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        List<Driver> driverOpt = driverRepository.findByPrimaryId(driverId);
-        if(driverOpt.size() > 0){
-            Driver driver = driverOpt.get(0);
-            driver.is_mq_alive = true;
-            driver.is_bgservice_alive = true;
-            driver.is_loc_updated = true;
-            driver.is_mq_alive_time = new Date();
-            driver.is_bgservice_alive_time = new Date();
-            driver.last_loc_update_time = new Date();
-            driver.lat = lat;
-            driver.lng = lng;
-//            driverRepository.save(driver);
-            driverRepository.updateBgServiceMqAliveLoction(driver.is_loc_updated,driver.driver_id);
+    public void updateBgServiceMqAliveLoction(int driverId, double lat, double lng,int check_alive_counter) {
+//        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        Date nowTime = new Date();
+        driverRepository.updateBgServiceMqAliveLoction(true,
+                nowTime, true, nowTime, true, nowTime,
+                lat, lng,check_alive_counter ,driverId);
+    }
+
+    @Override
+    public void updateBgServiceMqAliveLoc_Others(int driverId, int check_alive_counter) {
+//        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        Date nowTime = new Date();
+        if(check_alive_counter == 0){
+            check_alive_counter += 1;
+            driverRepository.updateCounter(check_alive_counter,driverId);
+        }else if(check_alive_counter == 1) {
+            check_alive_counter += 1;
+            driverRepository.updateCounterLocFlagLocTime(check_alive_counter, false, nowTime, driverId);
+        }else if(check_alive_counter == 2 || check_alive_counter == 3) {
+            check_alive_counter += 1;
+            driverRepository.updateCounterLocFlag(check_alive_counter, false,driverId);
+        }else if(check_alive_counter == 4) {
+            check_alive_counter += 1;
+            driverRepository.updateBgServiceMqAliveLoctionLastFailed(0,false,
+                    nowTime, false, nowTime, false, nowTime,check_alive_counter ,driverId);
         }
-//        driverRepository.updateBgServiceMqAliveLoction(1, nowTimeStr, 1, nowTimeStr, 1
-//, nowTimeStr, lat, lng, driverId);
     }
 
 //    @Override
