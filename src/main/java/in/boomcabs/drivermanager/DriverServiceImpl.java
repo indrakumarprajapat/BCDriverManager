@@ -25,8 +25,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public void updateBgServiceMqAliveLoction(int driverId, double lat, double lng,int check_alive_counter) {
-//        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        Date nowTime = new Date();
+        Date nowTime = DateUtil.getDateTime();
         driverRepository.updateBgServiceMqAliveLoction(true,
                 nowTime, true, nowTime, true, nowTime,
                 lat, lng,check_alive_counter ,driverId);
@@ -34,28 +33,20 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public void updateBgServiceMqAliveLoc_Others(int driverId, int check_alive_counter) {
-//        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        Date nowTime = new Date();
+        Date nowTime = DateUtil.getDateTime();
         if(check_alive_counter == 0){
             check_alive_counter += 1;
-            driverRepository.updateCounter(check_alive_counter,driverId);
+            driverRepository.updateCounter(nowTime, check_alive_counter,driverId);
         }else if(check_alive_counter == 1) {
             check_alive_counter += 1;
-            driverRepository.updateCounterLocFlagLocTime(check_alive_counter, false, nowTime, driverId);
+            driverRepository.updateCounterLocFlagLocTime(nowTime, check_alive_counter, false, nowTime, driverId);
         }else if(check_alive_counter == 2 || check_alive_counter == 3) {
             check_alive_counter += 1;
-            driverRepository.updateCounterLocFlag(check_alive_counter, false,driverId);
-        }else if(check_alive_counter == 4) {
+            driverRepository.updateCounterLocFlag(nowTime, check_alive_counter, false,driverId);
+        }else {
             check_alive_counter += 1;
-            driverRepository.updateBgServiceMqAliveLoctionLastFailed(0,false,
+            driverRepository.updateBgServiceMqAliveLoctionLastFailed(nowTime, 0,false,
                     nowTime, false, nowTime, false, nowTime,check_alive_counter ,driverId);
         }
     }
-
-//    @Override
-//    public void updateBgServiceMqAlive(int driverId) {
-//        String nowTimeStr = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-////        driverRepository.updateBgServiceMqAlive(1, nowTimeStr, 1, nowTimeStr, 1
-////                ,driverId);
-//    }
 }

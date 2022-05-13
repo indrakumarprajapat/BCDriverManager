@@ -37,7 +37,7 @@ public class DriverManager {
             Driver driver = driverList.get(i);
             try {
                 //Sending check loc msg
-                Date nowTime = new Date();
+                Date nowTime = DateUtil.getDateTime();
                 long diffInSeconds = (nowTime.getTime() - driver.last_loc_update_time.getTime())/ 1000;
                 if (diffInSeconds >= 60) {
                     String payload = driver.driver_id + "|";

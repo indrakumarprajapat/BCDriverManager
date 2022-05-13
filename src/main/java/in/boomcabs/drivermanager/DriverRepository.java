@@ -29,31 +29,30 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
                                        @Param(value = "lat") double lat, @Param(value = "lng") double lng,
                                        @Param(value = "check_alive_counter") int check_alive_counter, @Param(value = "driver_id") int driver_id);
 
-    @Transactional
     @Modifying
-    @Query("UPDATE Driver SET status = :status, is_bgservice_alive = :is_bgservice_alive, is_bgservice_alive_time = :is_bgservice_alive_time, is_mq_alive = :is_mq_alive, is_mq_alive_time = :is_mq_alive_time, is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time, check_alive_counter = :check_alive_counter WHERE driver_id = :driver_id")
-    void updateBgServiceMqAliveLoctionLastFailed(@Param(value = "status") int status, @Param(value = "is_bgservice_alive") boolean is_bgservice_alive, @Param(value = "is_bgservice_alive_time") Date is_bgservice_alive_time,
+    @Query("UPDATE Driver SET loc_request_time = :loc_request_time,status = :status, is_bgservice_alive = :is_bgservice_alive, is_bgservice_alive_time = :is_bgservice_alive_time, is_mq_alive = :is_mq_alive, is_mq_alive_time = :is_mq_alive_time, is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time, check_alive_counter = :check_alive_counter WHERE driver_id = :driver_id")
+    void updateBgServiceMqAliveLoctionLastFailed(@Param(value = "loc_request_time") Date loc_request_time,@Param(value = "status") int status, @Param(value = "is_bgservice_alive") boolean is_bgservice_alive, @Param(value = "is_bgservice_alive_time") Date is_bgservice_alive_time,
                                        @Param(value = "is_mq_alive") boolean is_mq_alive, @Param(value = "is_mq_alive_time") Date is_mq_alive_time,
                                        @Param(value = "is_loc_updated") boolean is_loc_updated,@Param(value = "last_loc_update_time") Date last_loc_update_time,
                                        @Param(value = "check_alive_counter") int check_alive_counter, @Param(value = "driver_id") int driver_id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Driver SET check_alive_counter = :check_alive_counter WHERE driver_id = :driver_id")
-    void updateCounter( @Param(value = "check_alive_counter") int check_alive_counter,
+    @Query("UPDATE Driver SET loc_request_time = :loc_request_time,check_alive_counter = :check_alive_counter WHERE driver_id = :driver_id")
+    void updateCounter( @Param(value = "loc_request_time") Date loc_request_time,@Param(value = "check_alive_counter") int check_alive_counter,
                         @Param(value = "driver_id") int driver_id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Driver SET check_alive_counter = :check_alive_counter,is_loc_updated = :is_loc_updated WHERE driver_id = :driver_id")
-    void updateCounterLocFlag( @Param(value = "check_alive_counter") int check_alive_counter,
+    @Query("UPDATE Driver SET loc_request_time = :loc_request_time,check_alive_counter = :check_alive_counter,is_loc_updated = :is_loc_updated WHERE driver_id = :driver_id")
+    void updateCounterLocFlag(@Param(value = "loc_request_time") Date loc_request_time, @Param(value = "check_alive_counter") int check_alive_counter,
                                @Param(value = "is_loc_updated") boolean is_loc_updated,
                                @Param(value = "driver_id") int driver_id);
 
     @Transactional
     @Modifying
-    @Query("UPDATE Driver SET check_alive_counter = :check_alive_counter,is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time WHERE driver_id = :driver_id")
-    void updateCounterLocFlagLocTime(@Param(value = "check_alive_counter") int check_alive_counter,
+    @Query("UPDATE Driver SET loc_request_time = :loc_request_time,check_alive_counter = :check_alive_counter,is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time WHERE driver_id = :driver_id")
+    void updateCounterLocFlagLocTime(@Param(value = "loc_request_time") Date loc_request_time, @Param(value = "check_alive_counter") int check_alive_counter,
                                      @Param(value = "is_loc_updated") boolean is_loc_updated,
                                      @Param(value = "last_loc_update_time") Date last_loc_update_time,
                                      @Param(value = "driver_id") int driver_id);
