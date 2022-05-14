@@ -29,7 +29,6 @@ public class DriverManager {
     //    @Scheduled(fixedRate = 240000)
     @Scheduled(fixedRate = 60000)
     public void checkDriversAndUpdateThem() {
-        LOG.info("Average value is {}");
         List<Driver> driverList = driverService.findAllOnlineDrivers();
         mqttPushClient.subscribe(TOPIC_DRIVER_LOC_REQ_ACK_FULL, 1);
 

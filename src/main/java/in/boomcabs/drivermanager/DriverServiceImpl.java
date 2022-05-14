@@ -43,7 +43,7 @@ public class DriverServiceImpl implements DriverService {
         }else if(check_alive_counter == 2 || check_alive_counter == 3) {
             check_alive_counter += 1;
             driverRepository.updateCounterLocFlag(nowTime, check_alive_counter, false,driverId);
-        }else {
+        }else if(check_alive_counter == 4){
             check_alive_counter += 1;
             driverRepository.updateBgServiceMqAliveLoctionLastFailed(nowTime, 0,false,
                     nowTime, false, nowTime, false, nowTime,check_alive_counter ,driverId);
