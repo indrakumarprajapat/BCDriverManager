@@ -1,5 +1,6 @@
-package in.boomcabs.drivermanager;
+package in.boomcabs.drivermanager.repositories;
 
+import in.boomcabs.drivermanager.model.Driver;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -7,8 +8,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Table;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +18,20 @@ public interface DriverRepository extends JpaRepository<Driver, Integer> {
 
     @Query(value = "SELECT * FROM cab_driverusers cd WHERE cd.driver_id = :driver_id", nativeQuery = true)
     List<Driver> findByPrimaryId(@Param("driver_id") int driver_id);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Driver SET is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time, lat = :lat, lng = :lng WHERE driver_id = :driver_id")
+    void updateDriverLocation(@Param(value = "is_loc_updated") boolean is_loc_updated,@Param(value = "last_loc_update_time") Date last_loc_update_time,
+                                       @Param(value = "lat") double lat, @Param(value = "lng") double lng,
+                                       @Param(value = "driver_id") int driver_id);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Driver SET is_loc_updated = :is_loc_updated, last_loc_update_time = :last_loc_update_time, lat = :lat, lng = :lng, check_alive_counter = :check_alive_counter WHERE driver_id = :driver_id")
+    void updateDriverLocationWithCounter(@Param(value = "is_loc_updated") boolean is_loc_updated,@Param(value = "last_loc_update_time") Date last_loc_update_time,
+                              @Param(value = "lat") double lat, @Param(value = "lng") double lng,@Param(value = "check_alive_counter") int check_alive_counter,
+                              @Param(value = "driver_id") int driver_id);
 
     @Transactional
     @Modifying

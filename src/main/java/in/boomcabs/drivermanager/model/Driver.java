@@ -1,4 +1,4 @@
-package in.boomcabs.drivermanager;
+package in.boomcabs.drivermanager.model;
 import lombok.Data;
 
 import javax.persistence.Entity;
