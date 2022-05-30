@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static in.boomcabs.drivermanager.Constants.*;
 
@@ -44,11 +45,15 @@ public class DriverManager {
     //    @Scheduled(fixedRate = 240000)
     @Scheduled(fixedRate = (TIME_PERIOD_LOC_REQUEST*1000))
     public void checkDriversAndUpdateThem() {
-        List<Driver> driverList = driverService.findAllOnlineDrivers();
-        mqttPushClient.subscribe(TOPIC_DRIVER_LOC_REQ_ACK_FULL, 1);
-
         List<DriverFirestore> driversFirestore = driversRepository.retrieveAll();
         driverService.updateAllFirestoreDriverLoc(driversFirestore);
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        List<Driver> driverList = driverService.findAllOnlineDrivers();
+        mqttPushClient.subscribe(TOPIC_DRIVER_LOC_REQ_ACK_FULL, 1);
 
         for (int i = 0; i < driverList.size(); i++) {
             Driver driver = driverList.get(i);
@@ -63,14 +68,7 @@ public class DriverManager {
                     //
 //                    if(driver.username.equals("7094088388") || drive  r.username.equals("8015069817")
 //                            || driver.username.equals("7094099399")){
-                        Note note = new Note();
-                        note.setSubject("BoomCab");
-                        note.setContent("Track Location");
-                        Map<String, String> data = new HashMap<String, String>();
-                        data.put("title","boomcab");
-                        data.put("body","Track Location");
-                        note.setData(data);
-                        firebaseService.sendNotification(note,driver.android_push_token);
+                        firebaseService.sendNotificationAPI(driver.driver_id,driver.android_push_token);
 //                    }
 //                    new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
                 }

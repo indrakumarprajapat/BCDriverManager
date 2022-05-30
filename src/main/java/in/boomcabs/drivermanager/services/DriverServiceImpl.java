@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static in.boomcabs.drivermanager.Constants.TIME_PERIOD_LOC_REQUEST;
+import static in.boomcabs.drivermanager.Constants.TIME_PERIOD_LOC_REQUEST_UPDATE;
 
 //  @Service marks a Java class that performs some service,
 //  such as executing business logic, performing 
@@ -52,7 +53,7 @@ public class DriverServiceImpl implements DriverService {
             }
             Date nowTime = DateUtil.getDateTime();
             long diffInSeconds = (nowTime.getTime() - date.getTime())/ 1000;
-            if (diffInSeconds <= TIME_PERIOD_LOC_REQUEST) {
+            if (diffInSeconds <= TIME_PERIOD_LOC_REQUEST_UPDATE) {
                 driverRepository.updateDriverLocationWithCounter(true,
                         date,
                         driverFirestore.latitude, driverFirestore.longitude, 0 ,driverFirestore.driverId);
