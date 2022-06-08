@@ -45,16 +45,19 @@ public class DriverManager {
     //    @Scheduled(fixedRate = 240000)
     @Scheduled(fixedRate = (TIME_PERIOD_LOC_REQUEST*1000))
     public void checkDriversAndUpdateThem() {
+        //fetching from firebase
         List<DriverFirestore> driversFirestore = driversRepository.retrieveAll();
         driverService.updateAllFirestoreDriverLoc(driversFirestore);
+        // 2 second sleep
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+//        mqttPushClient.subscribe(TOPIC_DRIVER_LOC_REQ_ACK_FULL, 1);
+        // fetching driver list from mysql
         List<Driver> driverList = driverService.findAllOnlineDrivers();
-        mqttPushClient.subscribe(TOPIC_DRIVER_LOC_REQ_ACK_FULL, 1);
-
+        //running loop to send FCM request
         for (int i = 0; i < driverList.size(); i++) {
             Driver driver = driverList.get(i);
             try {
@@ -62,14 +65,15 @@ public class DriverManager {
                 Date nowTime = DateUtil.getDateTime();
                 long diffInSeconds = (nowTime.getTime() - driver.last_loc_update_time.getTime())/ 1000;
                 if (diffInSeconds >= CHECK_TIME_PERIOD_LOC_REQUEST) {
-                    String payload = driver.driver_id + "|";
-//                    //commenting to tempaoroarly stop mq loc request
+//                    String payload = driver.driver_id + "|";
+//                    // commenting to tempaoroarly stop mq loc request
 //                    mqttPushClient.publish(1, false, TOPIC_DRIVER_LOC_REQ + driver.driver_id, payload);
-                    //
-//                    if(driver.username.equals("7094088388") || drive  r.username.equals("8015069817")
+                    if(driver.pushy_token != null) {
+//                        .equals("7094088388") || driver.username.equals("8015069817")
 //                            || driver.username.equals("7094099399")){
-                        firebaseService.sendNotificationAPI(driver.driver_id,driver.android_push_token);
-//                    }
+//                        firebaseService.sendNotificationAPI(driver.driver_id,driver.android_push_token);
+                        firebaseService.sendPushiNotificationAPI(driver.driver_id,driver.pushy_token);
+                    }
 //                    new ResponseEntity<>(new PushNotificationResponse(HttpStatus.OK.value(), "Notification has been sent."), HttpStatus.OK);
                 }
                 //updating values
@@ -82,6 +86,22 @@ public class DriverManager {
             }catch (Exception e){
                 e.printStackTrace();
             }
+        }
+        try {
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            //fetching from firebase
+                            List<DriverFirestore> driversFirestore = driversRepository.retrieveAll();
+                            driverService.updateAllFirestoreDriverLoc(driversFirestore);
+                        }
+                    },
+                    20000
+            );
+        }catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }

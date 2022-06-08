@@ -29,6 +29,7 @@ public class Driver {
     public int status;
     public String ios_push_token;
     public String android_push_token;
+    public String pushy_token;
     public Boolean is_loc_updated;
     public double lng;
     public double lat;
